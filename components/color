@@ -1,0 +1,90 @@
+import React from 'react';
+import { FlatList, View, Text, Image, StyleSheet, useColorScheme, TouchableOpacity, ScrollView } from 'react-native';
+import DATA, { ItemData } from '../../app/data/data'; // Import data and types
+
+const AllCategories = () => {
+  const colorScheme = useColorScheme();
+  const textColor = colorScheme === 'dark' ? '#ffffff' : '#000000';
+  const backgroundColor = colorScheme === 'dark' ? '#fffff' : '#f9f9f9';
+  const borderBottomColor = colorScheme === 'dark' ? 'white' : 'black';
+ 
+  
+
+  // Define the item props for the FlatList
+  const Item: React.FC<ItemData> = ({ name, image,due }) => (
+    <View style={[styles.item,{borderBottomColor}]}>
+        <TouchableOpacity 
+        
+        style={[{   
+        width:'100%',
+        shadowColor:'white',display:'flex',flexDirection:'row',
+      padding:5},
+        
+        //{backgroundColor}
+        ]}
+        >
+
+      <Image source={{ uri: image }} style={styles.image} />
+      <View>
+
+      <Text style={[styles.name, { color: textColor }]}>{name}</Text>
+      <Text style={[styles.due]}>{due}</Text>
+      </View>
+        </TouchableOpacity>
+    </View>
+    
+  );
+
+  return (
+      
+  
+
+      <FlatList
+      style={{
+        //backgroundColor:'blue',
+        height:'70%',width:'100%'}}
+      
+      data={DATA}
+      keyExtractor={(item) => item.id}
+      renderItem={({ item }) => <Item {...item} />}
+      showsVerticalScrollIndicator={false}
+      />
+
+   
+  );
+};
+
+export default AllCategories;
+
+const styles = StyleSheet.create({
+
+  item: {
+   // backgroundColor:'white',
+    padding: 0,
+    paddingTop: 0,
+    marginBottom:1,
+    marginTop:1,
+    width:'99%',
+    //elevation:3,
+    marginHorizontal:'0.5%',
+    //borderColor:'red',
+    //borderWidth:1,
+    //borderBottomColor:'red',
+    borderBottomWidth:0.25
+
+  },
+  name: {
+    fontSize: 18,
+    marginLeft: 10,
+  },
+  image: {
+    width: 50,
+    height: 50,
+    borderRadius: 50,
+  },
+  due: {
+    fontSize: 12,
+    marginLeft: 10,
+    color:'red'
+  },
+});

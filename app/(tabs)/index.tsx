@@ -1,70 +1,154 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View, Image, useColorScheme, TouchableOpacity,
+   ActivityIndicator, RefreshControl, ScrollView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Link, Stack, useRouter } from 'expo-router';
+import MainCategories from '@/components/IndexPage/MainCategories';
+import AllCategories from '@/components/IndexPage/AllCategories';
+import AntDesign from '@expo/vector-icons/AntDesign';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import Menu from '@/components/Menu';
+import { auth } from '../../app/config/firebaseConfig'; 
+import LocationCity from '@/components/LocationCity';
+import { LinearGradient } from 'expo-linear-gradient';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+const Index = () => {
+  const colorScheme = useColorScheme();
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [loading, setLoading] = useState(true); 
+  const [refreshing, setRefreshing] = useState(false); 
+  const router = useRouter(); 
+  const [user, setUser] = useState(null); 
 
-export default function HomeScreen() {
+  const textColor = colorScheme === 'dark' ? 'white' : '#000000';
+  const iconColor = colorScheme === 'dark' ? 'white' : 'black';
+  const backgroundColor = colorScheme === 'dark' ? 'black' : 'white';
+
+  const handleNearMePress = () => {
+    router.push('../NearMe'); // Navigate to the NearMe screen
+  };
+
+
+
+  const toggleMenu = () => {
+    setMenuVisible(!menuVisible);
+  };
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((authUser) => {
+      if (authUser) {
+        setUser(authUser); 
+      } else {
+        router.replace('../auth/Login'); 
+      }
+      setLoading(false); 
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+  
+    await fetchData(); 
+    setRefreshing(false);
+  };
+
+
+  const fetchData = async () => {
+   
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    console.log("Data fetched"); 
+  };
+
+  if (loading) {
+
+    return (
+      <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color='tomato' />
+      </SafeAreaView>
+    );
+  }
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
-  );
-}
+    <SafeAreaView style={[{ backgroundColor: backgroundColor }]}>
+      <Stack.Screen
+        options={{
+          headerShown: true,
+          title: '',
+          headerShadowVisible: true,
+          
+          headerLeft: () => (
+            <View style={{ display: 'flex', gap: 0, flexDirection: 'column' }}>
+              <Image 
+                source={require('../../assets/images/senti.png')}
+                style={{ width: 100, height: 40, marginLeft: 10, marginTop: 7 }}
+              />
+              <View style={{ marginLeft: 10, marginTop: -12 }}>
+                <LocationCity />
+              </View>
+            </View>
+          ),
+          headerRight: () => (
+            <View style={{ flexDirection: 'row', alignItems: 'center',
+             marginRight: 10, gap: 20 }}>
+              <TouchableOpacity onPress={() => console.log('pressed')}>
+                <Link href='../Search'>
+                  <AntDesign name="search1" size={25} color={iconColor} />
+                </Link>
+              </TouchableOpacity>
+              <View>
+                <MaterialCommunityIcons name="dots-vertical" size={24} 
+                color={iconColor} onPress={toggleMenu} />
+                <Menu visible={menuVisible} onClose={toggleMenu} role={''} />
+              </View>
+            </View>
+          ),
+        }}
+      />
+<TouchableOpacity style={{backgroundColor:backgroundColor, width:66,alignSelf:'flex-end'}}>
+       <LinearGradient
+              colors={['#add8e6', '#ff6347']} 
+              locations={[0.2, 0.8]} 
+              start={{ x: 1, y: 1 }} 
+              end={{ x: 0, y: 1 }} 
+              style={{
+                width: 66, height: 24, alignItems: 'center', borderRadius: 7, marginTop: 3,
+                alignSelf: 'flex-end', marginRight: 10
+              }}
+            >
 
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
+      <TouchableOpacity onPress={handleNearMePress}
+       style={{
+        width: 63, backgroundColor: backgroundColor, 
+        margin: 1, height: 22, borderRadius: 6,
+        alignItems: 'center'
+      }}>
+
+      <Text style={[{ color: textColor, fontSize: 16,
+         textAlignVertical:'center'}]}>Near Me</Text>
+      </TouchableOpacity>
+            </LinearGradient>
+</TouchableOpacity>
+
+        <MainCategories />
+     
+        <>
+        <Text style={[{ color: textColor, fontSize: 20,marginLeft:5 }]}>Latest Tenders</Text>
+        <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh} 
+          />
+        }
+      >
+        <AllCategories />
+        </ScrollView>
+        </>
+    </SafeAreaView>
+  );
+};
+
+export default Index;
+
+const styles = StyleSheet.create({});
