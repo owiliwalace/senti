@@ -49,7 +49,7 @@ const PostTender = () => {
       querySnapshot.forEach((doc) => {
         const userData = doc.data();
         setEmail(userData.email); 
-        setLocation(userData.location);
+        setLocation(userData.region);
       });
     }
   };
@@ -131,15 +131,15 @@ const PostTender = () => {
           <Picker selectedValue={category} onValueChange={(itemValue) => setCategory(itemValue)}
             style={{ flex: 1, borderWidth:1, borderColor:'black',color:textColor }}>
             <Picker.Item label="Select Category" value="" />
-            <Picker.Item label="Health" value="health" />
+            <Picker.Item label="Health" value="Health" />
             <Picker.Item label="Education" value="Education" />
             <Picker.Item label="County" value="COUNTY" />
-            <Picker.Item label="Transport" value="transport" />
+            <Picker.Item label="Transport" value="Iransport" />
             
-            <Picker.Item label="Institutional" value="institutional" />
+            <Picker.Item label="Institutional" value="Institutional" />
 
-            <Picker.Item label="Construction" value="construction" />
-            <Picker.Item label="Farming" value="farming" />
+            <Picker.Item label="Construction" value="Construction" />
+            <Picker.Item label="Farming" value="Farming" />
           </Picker>
     </View>
           </View>

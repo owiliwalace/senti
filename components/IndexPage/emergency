@@ -24,18 +24,11 @@ const AllCategories = () => {
         // Fetch tender documents
         const tenderCollection = collection(db, 'tender');
         const tenderSnapshot = await getDocs(tenderCollection);
-        const currentDate = new Date(); // Get the current date
-  
-        const tenderList = tenderSnapshot.docs
-          .map(doc => ({
-            id: doc.id, // Firestore document ID
-            ...doc.data(), // Spread the document data
-          }))
-          .filter(tender => {
-            // Ensure due_date exists and is in the future
-            return tender.due_date && new Date(tender.due_date.seconds * 1000) > currentDate;
-          });
-  
+        const tenderList = tenderSnapshot.docs.map(doc => ({
+          id: doc.id, // Firestore document ID
+          ...doc.data(), // Spread the document data
+        }));
+
         // Fetch users documents
         const usersCollection = collection(db, 'users');
         const usersSnapshot = await getDocs(usersCollection);
@@ -43,7 +36,7 @@ const AllCategories = () => {
           id: doc.id, // Firestore document ID
           ...doc.data(), // Spread the document data
         }));
-  
+
         // Create a map of users by email for quick access
         const usersMap = usersList.reduce((acc, user) => {
           if (user.email) {
@@ -51,17 +44,16 @@ const AllCategories = () => {
           }
           return acc;
         }, {});
-  
-        setData(tenderList); // Set only valid tenders
-        setUsersMap(usersMap);
+
+        setData(tenderList); // Set the tender data state
+        setUsersMap(usersMap); // Set the users map
       } catch (error) {
         console.error("Error fetching documents: ", error);
       }
     };
-  
+
     fetchData(); // Call the fetch function
   }, []);
-  
 
   // Function to calculate the time left (in days and hours)
   const calculateTimeLeft = (dueDate) => {
@@ -179,3 +171,4 @@ const styles = StyleSheet.create({
     marginRight: 10, // Space between image and text
   },
 });
+

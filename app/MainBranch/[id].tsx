@@ -37,13 +37,23 @@ const CategoryScreen = () => {
       collection(firestore, 'tender'),
       where('category', '==', categoryTitle)
     );
+  
     const querySnapshot = await getDocs(tendersQuery);
-    const fetchedTenders = querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    setTenders(fetchedTenders);
+    const currentDate = new Date(); // Get current time
+  
+    const fetchedTenders = querySnapshot.docs
+      .map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }))
+      .filter(tender => {
+        // Ensure due_date exists and is in the future
+        return tender.due_date && new Date(tender.due_date.seconds * 1000) > currentDate;
+      });
+  
+    setTenders(fetchedTenders); // Set only valid tenders
   };
+  
 
   const handlePress = (tender) => {
     router.push(`/Tender/${tender.id}`);

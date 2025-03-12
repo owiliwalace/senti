@@ -7,6 +7,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { getAuth } from 'firebase/auth';
 import Toast from 'react-native-toast-message';
 import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { Stack } from 'expo-router';
 
 const MAX_FILE_SIZE_MB = 3; // Maximum file size in MB
 
@@ -198,6 +199,12 @@ const PQ1: React.FC = () => {
 
     return (
         <SafeAreaView style={{ height: '100%', width: '100%', backgroundColor }}>
+            <Stack.Screen 
+            options={{
+                title:`PQ1 Registration Documentation ${totalPoints}/6`
+            }}
+            />
+            
             <BottomSheetModalProvider>
                 <View>
                    

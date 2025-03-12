@@ -46,7 +46,7 @@ const AllUsers = () => {
 
       <Text style={{color:textColor}}>Document ID: {item.id}</Text>
       <Text style={{color:textColor}}>Alternative Email: {item.alternativeEmail}</Text>
-      <Text style={{color:textColor}}>Location: {item.location}</Text>
+      <Text style={{color:textColor}}>Location: {item.region}</Text>
       <Text style={{color:textColor}}>Phone: {item.phone}</Text>
       <Text style={{color:textColor}}>Phone Number: {item.phoneNumber}</Text>
       <Text style={{color:textColor}}>Role: {item.role}</Text>

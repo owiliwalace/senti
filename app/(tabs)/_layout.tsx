@@ -1,7 +1,7 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { Colors } from '../../constants/Colors';
+import { useColorScheme } from '../../hooks/useColorScheme';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
@@ -13,7 +13,7 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: 'tomato',
-        //tabBarInactiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarInactiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
       
       }}>

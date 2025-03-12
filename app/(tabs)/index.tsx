@@ -24,7 +24,7 @@ const Index = () => {
   const backgroundColor = colorScheme === 'dark' ? 'black' : 'white';
 
   const handleNearMePress = () => {
-    router.push('../NearMe'); // Navigate to the NearMe screen
+    router.push('../NearMe'); 
   };
 
 
@@ -135,6 +135,7 @@ const Index = () => {
         <>
         <Text style={[{ color: textColor, fontSize: 20,marginLeft:5 }]}>Latest Tenders</Text>
         <ScrollView
+          style={{height:500}}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}

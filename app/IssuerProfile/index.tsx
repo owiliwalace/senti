@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { db } from '../../app/config/firebaseConfig'; // Import Firestore from your config
 import { collection, query, where, getDocs, Timestamp } from 'firebase/firestore'; // Import Firestore functions
-import { useLocalSearchParams, router, Stack } from 'expo-router'; // router and stack for navigation
+import { useLocalSearchParams, router, Stack } from 'expo-router'; 
 
 const CATEGORIES = ['Health', 'Education', 'COUNTY', 'Transport', 'Institutional', 'Construction', 'Farming'];
 

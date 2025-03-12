@@ -1,53 +1,52 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, useColorScheme } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { View, Text, TouchableOpacity, StyleSheet, useColorScheme, Pressable } from 'react-native';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
-import { db, auth } from '../../app/config/firebaseConfig'; // Ensure the path is correct
+import { db, auth } from '../../app/config/firebaseConfig';
+import { Link } from 'expo-router';
+
+interface UserData {
+  id: string;
+  email: string;
+  role: 'super' | 'basic' | 'premium' | 'guest';
+}
 
 interface MenuProps {
   visible: boolean;
   onClose: () => void;
-  role: string;
 }
 
 const Index: React.FC<MenuProps> = ({ visible, onClose }) => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<any>>();
   const colorScheme = useColorScheme();
-
-  const [userData, setUserData] = useState(null); 
+  const [userData, setUserData] = useState<UserData | null>(null);
 
   const textColor = colorScheme === 'dark' ? 'white' : 'black';
   const backgroundColor = colorScheme === 'dark' ? 'rgba(37, 37, 37, 1)' : 'white';
   const iconColor = colorScheme === 'dark' ? 'white' : 'black';
 
-  // Fetch user data from Firestore
   useEffect(() => {
-    const fetchUserData = () => {
-      const userEmail = auth.currentUser?.email; 
+    if (!auth.currentUser) return;
 
-      if (userEmail) {
-        const usersRef = collection(db, 'users');
-        const q = query(usersRef, where('email', '==', userEmail)); 
+    const userEmail = auth.currentUser.email;
+    const usersRef = collection(db, 'users');
+    const q = query(usersRef, where('email', '==', userEmail));
 
-        const unsubscribe = onSnapshot(q, (snapshot) => {
-          if (!snapshot.empty) {
-            const userDataFromFirestore = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))[0];
-            setUserData(userDataFromFirestore); // Set the first user document to state
-          } else {
-            setUserData(null); 
-          }
-        });
-
-        return () => unsubscribe(); 
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      if (!snapshot.empty) {
+        const userDataFromFirestore = snapshot.docs[0].data() as UserData;
+        setUserData(userDataFromFirestore);
+      } else {
+        setUserData(null);
       }
-    };
+    });
 
-    fetchUserData();
-  }, []); 
+    return () => unsubscribe();
+  }, []);
 
-  if (!visible) return null; // Conditional rendering based on visibility
+  if (!visible) return null;
 
   const navigateTo = (screen: string) => {
     onClose();
@@ -56,35 +55,44 @@ const Index: React.FC<MenuProps> = ({ visible, onClose }) => {
 
   return (
     <View style={[styles.menu, { backgroundColor }]}>
-      <TouchableOpacity style={styles.NavLinks} onPress={() => navigateTo('Settings')}>
-        <Ionicons name="settings-outline" size={20} color={iconColor} />
-        <Text style={[{ color: textColor }, styles.menuItem]}>Settings </Text>
-      </TouchableOpacity>
+      <Pressable style={styles.NavLinks} >
+      <Link href={'/Settings'}>
+        <Ionicons name="settings-outline" size={25} color={iconColor} />
+        <Text style={[{ color: textColor }, styles.menuItem]}>Settings</Text>
+      </Link>
+      </Pressable>
 
-      <TouchableOpacity style={styles.NavLinks} onPress={() => navigateTo('MyBidHistory')}>
-        <MaterialIcons name="history" size={20} color={iconColor} />
-        <Text style={[{ color: textColor }, styles.menuItem]}>History </Text>
-      </TouchableOpacity>
+      <Pressable style={styles.NavLinks}>
+      <Link href={'/MyBidHistory'} style={{ color: textColor,textAlign:'center', alignItems: 'center', }}>
+        <MaterialIcons name="history" size={25} color={iconColor} />
+        <Text style={[{ color: textColor,textAlign:'center',alignSelf:'center' }, styles.menuItem]}>History</Text>
+</Link>
+      </Pressable>
 
-      <TouchableOpacity style={styles.NavLinks} onPress={() => navigateTo('Documentation')}>
-        <Ionicons name="document-attach-outline" size={20} color={iconColor} />
-        <Text style={[{ color: textColor }, styles.menuItem]}>Documentation </Text>
-      </TouchableOpacity>
+      <Pressable style={styles.NavLinks} >
+<Link href={'/Documentation'}>
+        <Ionicons name="document-attach-outline" size={25} color={iconColor} />
+        <Text style={[{ color: textColor }, styles.menuItem]}>Documentation</Text>
+      </Link>
+      </Pressable>
 
-   
       {userData && (
         <>
           {(userData.role === 'super' || userData.role === 'basic' || userData.role === 'premium') && (
-            <TouchableOpacity style={styles.NavLinks} onPress={() => navigateTo('TenderHistory')}>
+            <Pressable style={styles.NavLinks}>
+              <Link href={'/TenderHistory'}>
               <MaterialIcons name="manage-history" size={20} color={iconColor} />
-              <Text style={[{ color: textColor }, styles.menuItem]}>Tender History </Text>
-            </TouchableOpacity>
+              <Text style={[{ color: textColor }, styles.menuItem]}>Tender History</Text>
+              </Link>
+            </Pressable>
           )}
 
           {(userData.role === 'super' || userData.role === 'premium') && (
-            <TouchableOpacity style={styles.NavLinks} onPress={() => navigateTo('Analytics')}>
+            <TouchableOpacity style={styles.NavLinks}>
+              <Link href={'/Analytics'}>
               <Ionicons name="analytics" size={20} color={iconColor} />
-              <Text style={{ color: 'tomato', fontSize: 16 }}>Analytics </Text>
+              <Text style={{ color: 'tomato', fontSize: 16 }}>Analytics</Text>
+              <Link href={'/Documentation'}></Link></Link>
             </TouchableOpacity>
           )}
         </>
@@ -107,13 +115,14 @@ const styles = StyleSheet.create({
   },
   menuItem: {
     fontSize: 16,
-    marginVertical: 5,
+    marginVertical: 0,marginBottom:2,
+    marginLeft:2
   },
   NavLinks: {
     flexDirection: 'row',
     gap: 4,
     alignItems: 'center',
-    marginBottom: 1.5,
+    marginBottom: 5,
   },
 });
 
