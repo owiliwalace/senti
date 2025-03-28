@@ -133,7 +133,7 @@ const Index = () => {
         <MainCategories />
      
         <>
-        <Text style={[{ color: textColor, fontSize: 20,marginLeft:5 }]}>Latest Tenders</Text>
+        <Text style={[{ color: textColor, fontSize: 20,marginLeft:5 }]}>Latest Tenders </Text>
         <ScrollView
           style={{height:500}}
         refreshControl={
